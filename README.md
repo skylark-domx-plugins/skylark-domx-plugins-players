@@ -1,2 +1,2 @@
-# skylark-ui-mimes
-A  ui library for rendering various media data specified by mime-type.
+# skylark-widgets-mmx
+The skylark media player library.

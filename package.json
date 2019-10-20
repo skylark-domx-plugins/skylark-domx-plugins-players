@@ -1,0 +1,35 @@
+{
+  "name": "skylark-widgets-mmx",
+  "version": "0.9.0",
+  "description": "A  ui library for rendering various media data specified by mime-type.",
+  "main": "-",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "www.skylarkjs.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skylarkui/skylark-widgets-mmx.git"
+  },
+  "keywords": [
+    "mime",
+    "media",
+    "skylark",
+    "skylarkjs",
+    "javacript",
+    "library",
+    "utility",
+    "html5"
+  ],
+  "author": "Hudaokeji Co.,Ltd",
+  "license": "MIT",
+  "bugs": "https://github.com/skylarkui/skylark-widgets-mmx/issues",
+  "dependencies": {
+    "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
+    "skylark-utils-dom": "https://github.com/skylarkutils/skylark-utils-dom#master",
+    "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git#master"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
