@@ -161,5 +161,5 @@ define([
 
   });
 
-  return 
+  return VideoPlayer;
 });

@@ -25,7 +25,7 @@
   "license": "MIT",
   "bugs": "https://github.com/skylarkui/skylark-widgets-mmx/issues",
   "dependencies": {
-    "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
+    "skylark-langx": "https://github.com/skylark-langx/skylark-langx#master",
     "skylark-utils-dom": "https://github.com/skylarkutils/skylark-utils-dom#master",
     "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git#master"
   },
