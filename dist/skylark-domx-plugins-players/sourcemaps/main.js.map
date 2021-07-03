@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":["define","players"],"mappings":";;;;;;;AAAAA,QACI,YACA,kBACD,SAASC,GACR,OAAOA","file":"../main.js","sourcesContent":["define([\r\n    \"./players\",\r\n    \"./video-player\"\r\n], function(players) {\r\n    return players;\r\n})\r\n"]}
