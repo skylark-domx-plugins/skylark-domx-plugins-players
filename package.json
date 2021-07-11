@@ -31,9 +31,9 @@
   ],
   "bugs": "https://github.com/skylark-domx-plugins/skylark-domx-plugins-players/issues",
   "dependencies": {
-    "skylark-langx": "https://github.com/skylark-langx/skylark-langx#master",
-    "skylark-domx": "https://github.com/skylark-domx/skylark-domx#master",
-    "skylark-domx-plugins-base": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-base.git#master"
+    "skylark-langx": "https://github.com/skylark-langx/skylark-langx",
+    "skylark-domx": "https://github.com/skylark-domx/skylark-domx",
+    "skylark-domx-plugins-base": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-base.git"
   },
   "engines": {
     "node": ">=0.8.0"
