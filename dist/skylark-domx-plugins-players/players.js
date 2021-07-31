@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx/skylark"],function(a){return a.attach("domx.plugins.players")});
+define(["skylark-domx-plugins-base/plugins"],function(s){"use strict";return s.players={}});
 //# sourceMappingURL=sourcemaps/players.js.map
