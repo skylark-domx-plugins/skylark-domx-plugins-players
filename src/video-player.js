@@ -6,15 +6,10 @@ define([
   "skylark-domx-medias",
   "skylark-domx-query",
   "skylark-domx-plugins-base",
-  "skylark-domx-plugins-toggles/fullscreen",
-  "skylark-domx-plugins-toggles/Pip",
   "./players",
-  "./play-control",
+  "./controls-bar",
   "./playback-animation",
-  "./progress-control",
-  "./time-control",
-  "./volume-control"
-],function(langx,styler,noder, eventer,medias,$ , plugins,Fullscreen,Pip,players,PlayControl,PlaybackAnimation,ProgressControl,TimeControl,VolumeControl) {
+],function(langx,styler,noder, eventer,medias,$ , plugins,players,ControlsBar,PlaybackAnimation) {
 
   'use strict'
 
@@ -28,32 +23,8 @@ define([
         video : 'video',
         videoControls : '.video-controls',
 
-        playButton : '.play-button',
-        playbackIcons : '.playback-icons use',
-
-        timeControl : ".time",
-        timeElapsed : '.time-elapsed',
-        duration : '.duration',
-
-        progressControl : ".video-progress",
-        progressBar : '.progress-bar',
-        seek : '.seek',
-        seekTooltip : '.seek-tooltip',
-
-        volumeControl : ".volume-control",
-        volumeButton : '.volume-button',
-        volumeIcons : '.volume-button use',
-        volumeMute : 'use[href="#volume-mute"]',
-        volumeLow : 'use[href="#volume-low"]',
-        volumeHigh : 'use[href="#volume-high"]',
-        volume : '.volume',
 
         playbackAnimation : '.playback-animation',
-
-        fullscreenButton : '.fullscreen-button',
-        fullscreenIcons : '.fullscreen-button use',
-
-        pipButton : '.pip-button'
 
       }
     },
@@ -72,54 +43,29 @@ define([
 
       //this._playButton = $el.find(selectors.playButton)[0];
       //this._playbackIcons = $el.find(selectors.playbackIcons);
-      this._playControl = PlayControl.instantiate($el.find(selectors.playButton)[0],{
-        media : this.$video
+      this._controlsBar = ControlsBar.instantiate(this.$videoControls[0],{
+        media : this.$video,
+        container : this.elmx()
       });
 
 
-      //this._timeElapsed = $el.find(selectors.timeElapsed)[0];
-      //this._duration = $el.find(selectors.duration)[0];
-      this._timeControl = TimeControl.instantiate($el.find(selectors.timeControl)[0],{
-        media : this.$video        
-      });
-      
-      //this._progressBar = $el.find(selectors.progressBar)[0];
-      //this._seek = $el.find(selectors.seek)[0];
-      //this._seekTooltip = $el.find(selectors.seekTooltip)[0];
-      this._progressControl = ProgressControl.instantiate($el.find(selectors.progressControl)[0],{
-        media : this.$video        
-      });
 
-      //this._volumeButton = $el.find(selectors.volumeButton)[0];
-      //this._volumeIcons = $el.find(selectors.volumeIcons);
-      //this._volumeMute = $el.find(selectors.volumeMute)[0];
-      //this._volumeLow = $el.find(selectors.volumeLow)[0];
-      //this._volumeHigh = $el.find(selectors.volumeHigh)[0];
-      //this._volume = $el.find(selectors.volume)[0];
-      this._volumeControl = VolumeControl.instantiate($el.find(selectors.volumeControl)[0],{
-        media : this.$video        
-      });
       
       //this._playbackAnimation = $el.find(selectors.playbackAnimation)[0];
       this._playbackAnimation = PlaybackAnimation.instantiate($el.find(selectors.playbackAnimation)[0],{
         media : this.$video        
       });
       
-      //this._fullscreenButton = $el.find(selectors.fullscreenButton)[0];
-      //this._fullscreenIcons = $el.find(selectors.fullscreenIcons);
-      this._fullscreen = Fullscreen.instantiate($el.find(selectors.fullscreenButton)[0],{
-        target : this.elmx()
-      });
-      
-      //this._pipButton = $el.find(selectors.pipButton)[0];
-      this._pip = Pip.instantiate($el.find(selectors.pipButton)[0],{
-        target : this.$video        
-      });
+
 
       // Add eventlisteners here
-      this.listenTo($(this._videoControls),'mouseenter',this.showControls);
-      this.listenTo($(this._videoControls),'mouseleave',this.hideControls);
+      this.listenTo($el,'mouseenter',this.showControls);
+      this.listenTo($el,'mouseleave',this.hideControls);
       /*
+      this.listenTo(this.$video,'mouseenter',this.showControls);
+      this.listenTo(this.$video,'mouseleave',this.hideControls);
+      this.listenTo(this.$videoControls,'mouseenter',this.showControls);
+      this.listenTo(this.$videoControls,'mouseleave',this.hideControls);
       this.listenTo($(this._playButton),'click', this.togglePlay);
       this.listenTo($(this._video),'play',this.updatePlayButton);
       this.listenTo($(this._video),'pause',this.updatePlayButton);
@@ -129,8 +75,6 @@ define([
       this.listenTo($(this._video),'volumechange',this.updateVolumeIcon);
       this.listenTo($(this._video),'click',this.togglePlay);
       this.listenTo($(this._video),'click',this.animatePlayback);
-      this.listenTo($(this._video),'mouseenter',this.showControls);
-      this.listenTo($(this._video),'mouseleave',this.hideControls);
       this.listenTo($(this._seek),'mousemove',this.updateSeekTooltip);
       this.listenTo($(this._seek),'input',this.skipAhead);
       this.listenTo($(this._volume),'input',this.updateVolume);
@@ -225,12 +169,12 @@ define([
         return;
       }
 
-      styler.addClass(this._videoControls,'hide');
+      this.$videoControls.hide();
     },
 
     // showControls displays the video controls
     showControls : function () {
-      styler.removeClass(this._videoControls,'hide');
+      this.$videoControls.show();
     },
 
     // keyboardShortcuts executes the relevant functions for

@@ -201,7 +201,11 @@ requirejs.config({
             main: 'main'
          },
 
-
+         {
+           name : "skylark-domx-plugins-ranges",
+           location : "../node_modules/skylark-domx-plugins-ranges/dist/uncompressed/skylark-domx-plugins-ranges",
+            main: 'main'
+         },
          {
            name : "skylark-domx-styler",
            location : "../node_modules/skylark-domx-styler/dist/uncompressed/skylark-domx-styler",

@@ -270,94 +270,6 @@ define('skylark-domx-plugins-players/play-control',[
 });
 
 
-define('skylark-domx-plugins-players/playback-animation',[
-  "skylark-langx",
-  "skylark-domx-styler",
-  "skylark-domx-noder",
-  "skylark-domx-eventer",
-  "skylark-domx-animates",
-  "skylark-domx-query",
-  "skylark-domx-plugins-base"
-],function(langx,styler,noder, eventer,animates,$ , plugins) {
-
-  'use strict'
-
-  var PlaybackAnimation = plugins.Plugin.inherit({
-    klassName : "PlaybackAnimation",
-
-    pluginName : "domx.players.playback_animation",
-   
-    options : {
-      classes : {
-        play : "play",
-        pause : "pause"
-      },
-      selectors : {
-        playbackAnimation : null //'.playback-animation'
-
-      }
-    },
-
-
-    _construct: function(elm, options) {
-      //this.options = options
-      plugins.Plugin.prototype._construct.call(this,elm,options);
-
-      let $el = this.$(),
-          selectors = this.options.selectors,
-          $media = this._media = this.options.media;
-
-
-
-      if (selectors.playbackAnimation) {
-        this.$playbackAnimation = $el.find(selectors.playbackAnimation);
-      } else {
-        this.$playbackAnimation = $el;
-      }
-
-
-      this.listenTo($media,'click',this.animatePlayback);
-
-
-    },
-
-    // animatePlayback displays an animation when
-    // the video is played or paused
-    animatePlayback : function () {
-    // updatePlayButton updates the playback icon and tooltip
-    // depending on the playback state
-      if (this._media.paused()) {
-        this.$playbackAnimation.removeClass(this.options.classes.play).addClass(this.options.classes.pause);
-      } else {
-        this.$playbackAnimation.removeClass(this.options.classes.pause).addClass(this.options.classes.play);
-      }
-
-      this.$playbackAnimation.animate(
-        [
-          {
-            opacity: 1,
-            transform: 'scale(1)',
-          },
-          {
-            opacity: 0,
-            transform: 'scale(1.3)',
-          },
-        ],
-        {
-          duration: 500,
-        }
-      );
-    }
-
-
-  });
-
-  plugins.register(PlaybackAnimation);
-
-  return PlaybackAnimation;
-});
-
-
 define('skylark-domx-plugins-players/progress-control',[
   "skylark-langx",
   "skylark-domx-styler",
@@ -365,11 +277,12 @@ define('skylark-domx-plugins-players/progress-control',[
   "skylark-domx-eventer",
   "skylark-domx-query",
   "skylark-domx-plugins-base",
+  "skylark-domx-plugins-ranges",
   "./players"
-],function(langx,styler,noder, eventer,$ , plugins,players) {
+],function(langx,styler,noder, eventer,$ , plugins,ranges,players) {
   'use strict'
 
-  var ProgressControl = plugins.Plugin.inherit({
+  var ProgressControl = ranges.Progress.inherit({
     klassName : "ProgressControl",
 
     pluginName : "domx.players.progress_control",
@@ -384,35 +297,17 @@ define('skylark-domx-plugins-players/progress-control',[
 
 
     _construct: function(elm, options) {
-      plugins.Plugin.prototype._construct.call(this,elm,options);
+      ranges.Progress.prototype._construct.call(this,elm,options);
 
       let $el = this.$(),
           selectors = this.options.selectors,
           $media = this._media = this.options.media;
 
-
-      this.$progressBar = $el.find(selectors.progressBar);
-      this.$seek = $el.find(selectors.seek);
-      this.$seekTooltip = $el.find(selectors.seekTooltip);
-
       // Add eventlisteners here
       this.listenTo($media,'timeupdate',this.updateProgress);
-      this.listenTo(this.$seek,'mousemove',this.updateSeekTooltip);
-      this.listenTo(this.$seek,'input',this.skipAhead);
 
       this.listenTo($media,'loadedmetadata',this.updateDuration);
 
-    },
-
-    // formatTime takes a time length in seconds and returns the time in
-    // minutes and seconds
-    formatTime : function (timeInSeconds) {
-      const result = new Date(timeInSeconds * 1000).toISOString().substr(11, 8);
-
-      return {
-        minutes: result.substr(3, 2),
-        seconds: result.substr(6, 2),
-      };
     },
 
     // initializeVideo sets the video duration, and maximum value of the
@@ -438,13 +333,8 @@ define('skylark-domx-plugins-players/progress-control',[
     // roughly work out what point in the video the user will skip to if
     // the progress bar is clicked at that point
     updateSeekTooltip : function (event) {
-      const skipTo = Math.round(
-        (event.offsetX / event.target.clientWidth) *
-          parseInt(event.target.getAttribute('max'), 10)
-      );
-      this.$seek.attr('seek', skipTo);
-      const t = this.formatTime(skipTo);
-      this.$seekTooltip.text(`${t.minutes}:${t.seconds}`);
+      ranges.Progress.prototype.updateSeekTooltip.call(this,event);
+
       //const rect = this._media.getBoundingClientRect();
       const pos = this._media.pagePosition();
       this.$seekTooltip.css("left", `${event.pageX - pos.left}px`);
@@ -453,14 +343,10 @@ define('skylark-domx-plugins-players/progress-control',[
     // skipAhead jumps to a different point in the video when the progress bar
     // is clicked
     skipAhead : function (event) {
-      const skipTo = event.target.dataset.seek
-        ? event.target.dataset.seek
-        : event.target.value;
+      ranges.Progress.prototype.skipAhead.call(this,event);
 
       let media = this._media;
-      media.currentTime(skipTo);
-      this.$progressBar.val(skipTo);
-      this.$seek.val(skipTo);
+      media.currentTime(this.$seek.val());
     },
 
 
@@ -654,7 +540,7 @@ define('skylark-domx-plugins-players/volume-control',[
 });
 
 
-define('skylark-domx-plugins-players/video-player',[
+define('skylark-domx-plugins-players/controls-bar',[
   "skylark-langx",
   "skylark-domx-styler",
   "skylark-domx-noder",
@@ -666,23 +552,20 @@ define('skylark-domx-plugins-players/video-player',[
   "skylark-domx-plugins-toggles/Pip",
   "./players",
   "./play-control",
-  "./playback-animation",
   "./progress-control",
   "./time-control",
   "./volume-control"
-],function(langx,styler,noder, eventer,medias,$ , plugins,Fullscreen,Pip,players,PlayControl,PlaybackAnimation,ProgressControl,TimeControl,VolumeControl) {
+],function(langx,styler,noder, eventer,medias,$ , plugins,Fullscreen,Pip,players,PlayControl,ProgressControl,TimeControl,VolumeControl) {
 
   'use strict'
 
-  var VideoPlayer = plugins.Plugin.inherit({
-    klassName : "VideoPlayer",
+  var ControlsBar = plugins.Plugin.inherit({
+    klassName : "ControlsBar",
 
-    pluginName : "domx.players.video",
+    pluginName : "domx.players.controls_bar",
    
     options : {
       selectors : {
-        video : 'video',
-        videoControls : '.video-controls',
 
         playButton : '.play-button',
         playbackIcons : '.playback-icons use',
@@ -704,12 +587,216 @@ define('skylark-domx-plugins-players/video-player',[
         volumeHigh : 'use[href="#volume-high"]',
         volume : '.volume',
 
-        playbackAnimation : '.playback-animation',
-
         fullscreenButton : '.fullscreen-button',
         fullscreenIcons : '.fullscreen-button use',
 
         pipButton : '.pip-button'
+
+      }
+    },
+
+
+    _construct: function(elm, options) {
+      //this.options = options
+      plugins.Plugin.prototype._construct.call(this,elm,options);
+
+      let $el = this.$(),
+          selectors = this.options.selectors,
+          media = this.options.media,
+          container = this.options.container;
+
+
+      //this._playButton = $el.find(selectors.playButton)[0];
+      //this._playbackIcons = $el.find(selectors.playbackIcons);
+      this._playControl = PlayControl.instantiate($el.find(selectors.playButton)[0],{
+        media
+      });
+
+
+      //this._timeElapsed = $el.find(selectors.timeElapsed)[0];
+      //this._duration = $el.find(selectors.duration)[0];
+      this._timeControl = TimeControl.instantiate($el.find(selectors.timeControl)[0],{
+        media        
+      });
+      
+      //this._progressBar = $el.find(selectors.progressBar)[0];
+      //this._seek = $el.find(selectors.seek)[0];
+      //this._seekTooltip = $el.find(selectors.seekTooltip)[0];
+      this._progressControl = ProgressControl.instantiate($el.find(selectors.progressControl)[0],{
+        media      
+      });
+
+      //this._volumeButton = $el.find(selectors.volumeButton)[0];
+      //this._volumeIcons = $el.find(selectors.volumeIcons);
+      //this._volumeMute = $el.find(selectors.volumeMute)[0];
+      //this._volumeLow = $el.find(selectors.volumeLow)[0];
+      //this._volumeHigh = $el.find(selectors.volumeHigh)[0];
+      //this._volume = $el.find(selectors.volume)[0];
+      this._volumeControl = VolumeControl.instantiate($el.find(selectors.volumeControl)[0],{
+        media    
+      });
+      
+
+      //this._fullscreenButton = $el.find(selectors.fullscreenButton)[0];
+      //this._fullscreenIcons = $el.find(selectors.fullscreenIcons);
+      this._fullscreen = Fullscreen.instantiate($el.find(selectors.fullscreenButton)[0],{
+        target : container
+      });
+      
+      //this._pipButton = $el.find(selectors.pipButton)[0];
+      this._pip = Pip.instantiate($el.find(selectors.pipButton)[0],{
+        target : media       
+      });
+
+      // Add eventlisteners here
+      /*
+      this.listenTo($(this._playButton),'click', this.togglePlay);
+      this.listenTo($(this._video),'play',this.updatePlayButton);
+      this.listenTo($(this._video),'pause',this.updatePlayButton);
+      this.listenTo($(this._video),'loadedmetadata',this.initializeVideo);
+      this.listenTo($(this._video),'timeupdate',this.updateTimeElapsed);
+      this.listenTo($(this._video),'timeupdate',this.updateProgress);
+      this.listenTo($(this._video),'volumechange',this.updateVolumeIcon);
+      this.listenTo($(this._video),'click',this.togglePlay);
+      this.listenTo($(this._video),'click',this.animatePlayback);
+      this.listenTo($(this._video),'mouseenter',this.showControls);
+      this.listenTo($(this._video),'mouseleave',this.hideControls);
+      this.listenTo($(this._seek),'mousemove',this.updateSeekTooltip);
+      this.listenTo($(this._seek),'input',this.skipAhead);
+      this.listenTo($(this._volume),'input',this.updateVolume);
+      this.listenTo($(this._volumeButton),'click',this.toggleMute);
+      this.listenTo($(this._fullscreenButton),'click',this.toggleFullScreen);
+      this.listenTo($el,'fullscreenchange,webkitfullscreenchange',this.updateFullscreenButton);
+      this.listenTo($(this._pipButton),'click',this.togglePip);
+
+      if (!('pictureInPictureEnabled' in document)) {
+          this._pipButton.classList.add('hidden');
+      }
+      */
+    }
+  });
+
+  plugins.register(ControlsBar);
+
+  return players.ControlsBar = ControlsBar;
+});
+
+
+define('skylark-domx-plugins-players/playback-animation',[
+  "skylark-langx",
+  "skylark-domx-styler",
+  "skylark-domx-noder",
+  "skylark-domx-eventer",
+  "skylark-domx-animates",
+  "skylark-domx-query",
+  "skylark-domx-plugins-base"
+],function(langx,styler,noder, eventer,animates,$ , plugins) {
+
+  'use strict'
+
+  var PlaybackAnimation = plugins.Plugin.inherit({
+    klassName : "PlaybackAnimation",
+
+    pluginName : "domx.players.playback_animation",
+   
+    options : {
+      classes : {
+        play : "play",
+        pause : "pause"
+      },
+      selectors : {
+        playbackAnimation : null //'.playback-animation'
+
+      }
+    },
+
+
+    _construct: function(elm, options) {
+      //this.options = options
+      plugins.Plugin.prototype._construct.call(this,elm,options);
+
+      let $el = this.$(),
+          selectors = this.options.selectors,
+          $media = this._media = this.options.media;
+
+
+
+      if (selectors.playbackAnimation) {
+        this.$playbackAnimation = $el.find(selectors.playbackAnimation);
+      } else {
+        this.$playbackAnimation = $el;
+      }
+
+
+      this.listenTo($media,'click',this.animatePlayback);
+
+
+    },
+
+    // animatePlayback displays an animation when
+    // the video is played or paused
+    animatePlayback : function () {
+    // updatePlayButton updates the playback icon and tooltip
+    // depending on the playback state
+      if (this._media.paused()) {
+        this.$playbackAnimation.removeClass(this.options.classes.play).addClass(this.options.classes.pause);
+      } else {
+        this.$playbackAnimation.removeClass(this.options.classes.pause).addClass(this.options.classes.play);
+      }
+
+      this.$playbackAnimation.animate(
+        [
+          {
+            opacity: 1,
+            transform: 'scale(1)',
+          },
+          {
+            opacity: 0,
+            transform: 'scale(1.3)',
+          },
+        ],
+        {
+          duration: 500,
+        }
+      );
+    }
+
+
+  });
+
+  plugins.register(PlaybackAnimation);
+
+  return PlaybackAnimation;
+});
+
+
+define('skylark-domx-plugins-players/video-player',[
+  "skylark-langx",
+  "skylark-domx-styler",
+  "skylark-domx-noder",
+  "skylark-domx-eventer",
+  "skylark-domx-medias",
+  "skylark-domx-query",
+  "skylark-domx-plugins-base",
+  "./players",
+  "./controls-bar",
+  "./playback-animation",
+],function(langx,styler,noder, eventer,medias,$ , plugins,players,ControlsBar,PlaybackAnimation) {
+
+  'use strict'
+
+  var VideoPlayer = plugins.Plugin.inherit({
+    klassName : "VideoPlayer",
+
+    pluginName : "domx.players.video",
+   
+    options : {
+      selectors : {
+        video : 'video',
+        videoControls : '.video-controls',
+
+
+        playbackAnimation : '.playback-animation',
 
       }
     },
@@ -728,54 +815,29 @@ define('skylark-domx-plugins-players/video-player',[
 
       //this._playButton = $el.find(selectors.playButton)[0];
       //this._playbackIcons = $el.find(selectors.playbackIcons);
-      this._playControl = PlayControl.instantiate($el.find(selectors.playButton)[0],{
-        media : this.$video
+      this._controlsBar = ControlsBar.instantiate(this.$videoControls[0],{
+        media : this.$video,
+        container : this.elmx()
       });
 
 
-      //this._timeElapsed = $el.find(selectors.timeElapsed)[0];
-      //this._duration = $el.find(selectors.duration)[0];
-      this._timeControl = TimeControl.instantiate($el.find(selectors.timeControl)[0],{
-        media : this.$video        
-      });
-      
-      //this._progressBar = $el.find(selectors.progressBar)[0];
-      //this._seek = $el.find(selectors.seek)[0];
-      //this._seekTooltip = $el.find(selectors.seekTooltip)[0];
-      this._progressControl = ProgressControl.instantiate($el.find(selectors.progressControl)[0],{
-        media : this.$video        
-      });
 
-      //this._volumeButton = $el.find(selectors.volumeButton)[0];
-      //this._volumeIcons = $el.find(selectors.volumeIcons);
-      //this._volumeMute = $el.find(selectors.volumeMute)[0];
-      //this._volumeLow = $el.find(selectors.volumeLow)[0];
-      //this._volumeHigh = $el.find(selectors.volumeHigh)[0];
-      //this._volume = $el.find(selectors.volume)[0];
-      this._volumeControl = VolumeControl.instantiate($el.find(selectors.volumeControl)[0],{
-        media : this.$video        
-      });
       
       //this._playbackAnimation = $el.find(selectors.playbackAnimation)[0];
       this._playbackAnimation = PlaybackAnimation.instantiate($el.find(selectors.playbackAnimation)[0],{
         media : this.$video        
       });
       
-      //this._fullscreenButton = $el.find(selectors.fullscreenButton)[0];
-      //this._fullscreenIcons = $el.find(selectors.fullscreenIcons);
-      this._fullscreen = Fullscreen.instantiate($el.find(selectors.fullscreenButton)[0],{
-        target : this.elmx()
-      });
-      
-      //this._pipButton = $el.find(selectors.pipButton)[0];
-      this._pip = Pip.instantiate($el.find(selectors.pipButton)[0],{
-        target : this.$video        
-      });
+
 
       // Add eventlisteners here
-      this.listenTo($(this._videoControls),'mouseenter',this.showControls);
-      this.listenTo($(this._videoControls),'mouseleave',this.hideControls);
+      this.listenTo($el,'mouseenter',this.showControls);
+      this.listenTo($el,'mouseleave',this.hideControls);
       /*
+      this.listenTo(this.$video,'mouseenter',this.showControls);
+      this.listenTo(this.$video,'mouseleave',this.hideControls);
+      this.listenTo(this.$videoControls,'mouseenter',this.showControls);
+      this.listenTo(this.$videoControls,'mouseleave',this.hideControls);
       this.listenTo($(this._playButton),'click', this.togglePlay);
       this.listenTo($(this._video),'play',this.updatePlayButton);
       this.listenTo($(this._video),'pause',this.updatePlayButton);
@@ -785,8 +847,6 @@ define('skylark-domx-plugins-players/video-player',[
       this.listenTo($(this._video),'volumechange',this.updateVolumeIcon);
       this.listenTo($(this._video),'click',this.togglePlay);
       this.listenTo($(this._video),'click',this.animatePlayback);
-      this.listenTo($(this._video),'mouseenter',this.showControls);
-      this.listenTo($(this._video),'mouseleave',this.hideControls);
       this.listenTo($(this._seek),'mousemove',this.updateSeekTooltip);
       this.listenTo($(this._seek),'input',this.skipAhead);
       this.listenTo($(this._volume),'input',this.updateVolume);
@@ -881,12 +941,12 @@ define('skylark-domx-plugins-players/video-player',[
         return;
       }
 
-      styler.addClass(this._videoControls,'hide');
+      this.$videoControls.hide();
     },
 
     // showControls displays the video controls
     showControls : function () {
-      styler.removeClass(this._videoControls,'hide');
+      this.$videoControls.show();
     },
 
     // keyboardShortcuts executes the relevant functions for
