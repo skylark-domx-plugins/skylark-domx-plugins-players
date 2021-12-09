@@ -1,0 +1,8 @@
+.play-button.play svg use[href="#pause"]{
+   display: none;
+}
+
+.play-button.pause svg use[href="#play"]{
+   display: none;
+}
+

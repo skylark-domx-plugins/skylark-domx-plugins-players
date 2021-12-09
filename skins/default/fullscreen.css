@@ -1,0 +1,11 @@
+.fullscreen-button {
+  margin-right: 0;
+}
+
+.fullscreen-button.full svg use[href="#fullscreen-exit"] {
+  display: none;
+}
+
+.fullscreen-button.unfull svg use[href="#fullscreen"] {
+  display: none;
+}

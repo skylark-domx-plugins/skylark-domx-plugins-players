@@ -33,7 +33,9 @@
   "dependencies": {
     "skylark-langx": "https://github.com/skylark-langx/skylark-langx",
     "skylark-domx": "https://github.com/skylark-domx/skylark-domx",
-    "skylark-domx-plugins-base": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-base.git"
+    "skylark-domx-medias": "https://github.com/skylark-domx/skylark-domx-medias",
+    "skylark-domx-plugins-base": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-base.git",
+    "skylark-domx-plugins-toggles": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-toggles.git"
   },
   "engines": {
     "node": ">=0.8.0"
