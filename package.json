@@ -35,6 +35,7 @@
     "skylark-domx": "https://github.com/skylark-domx/skylark-domx",
     "skylark-domx-medias": "https://github.com/skylark-domx/skylark-domx-medias",
     "skylark-domx-plugins-base": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-base.git",
+    "skylark-domx-plugins-ranges": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-ranges.git",
     "skylark-domx-plugins-toggles": "git+https://github.com/skylark-domx-plugins/skylark-domx-plugins-toggles.git"
   },
   "engines": {

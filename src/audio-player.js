@@ -13,15 +13,16 @@ define([
 
   'use strict'
 
-  var VideoPlayer = plugins.Plugin.inherit({
-    klassName : "VideoPlayer",
+  var AudioPlayer = plugins.Plugin.inherit({
+    klassName : "AudioPlayer",
 
-    pluginName : "domx.players.video",
+    pluginName : "domx.players.audio",
    
     options : {
       selectors : {
-        video : 'video',
-        videoControls : '.controls-bar',
+        audio : 'audio',
+        audioControls : '.controls-bar',
+
 
         playbackAnimation : '.playback-animation',
 
@@ -36,14 +37,14 @@ define([
       let $el = this.$(),
           selectors = this.options.selectors;
 
-      this.$video = this.elmx().find(selectors.video);
+      this.$audio = this.elmx().find(selectors.audio);
 
-      this.$videoControls = $el.find(selectors.videoControls);
+      this.$audioControls = $el.find(selectors.audioControls);
 
       //this._playButton = $el.find(selectors.playButton)[0];
       //this._playbackIcons = $el.find(selectors.playbackIcons);
-      this._controlsBar = ControlsBar.instantiate(this.$videoControls[0],{
-        media : this.$video,
+      this._controlsBar = ControlsBar.instantiate(this.$audioControls[0],{
+        media : this.$audio,
         container : this.elmx()
       });
 
@@ -52,7 +53,7 @@ define([
       
       //this._playbackAnimation = $el.find(selectors.playbackAnimation)[0];
       this._playbackAnimation = PlaybackAnimation.instantiate($el.find(selectors.playbackAnimation)[0],{
-        media : this.$video        
+        media : this.$audio        
       });
       
 
@@ -61,19 +62,19 @@ define([
       this.listenTo($el,'mouseenter',this.showControls);
       this.listenTo($el,'mouseleave',this.hideControls);
       /*
-      this.listenTo(this.$video,'mouseenter',this.showControls);
-      this.listenTo(this.$video,'mouseleave',this.hideControls);
-      this.listenTo(this.$videoControls,'mouseenter',this.showControls);
-      this.listenTo(this.$videoControls,'mouseleave',this.hideControls);
+      this.listenTo(this.$audio,'mouseenter',this.showControls);
+      this.listenTo(this.$audio,'mouseleave',this.hideControls);
+      this.listenTo(this.$audioControls,'mouseenter',this.showControls);
+      this.listenTo(this.$audioControls,'mouseleave',this.hideControls);
       this.listenTo($(this._playButton),'click', this.togglePlay);
-      this.listenTo($(this._video),'play',this.updatePlayButton);
-      this.listenTo($(this._video),'pause',this.updatePlayButton);
-      this.listenTo($(this._video),'loadedmetadata',this.initializeVideo);
-      this.listenTo($(this._video),'timeupdate',this.updateTimeElapsed);
-      this.listenTo($(this._video),'timeupdate',this.updateProgress);
-      this.listenTo($(this._video),'volumechange',this.updateVolumeIcon);
-      this.listenTo($(this._video),'click',this.togglePlay);
-      this.listenTo($(this._video),'click',this.animatePlayback);
+      this.listenTo($(this._audio),'play',this.updatePlayButton);
+      this.listenTo($(this._audio),'pause',this.updatePlayButton);
+      this.listenTo($(this._audio),'loadedmetadata',this.initializeAudio);
+      this.listenTo($(this._audio),'timeupdate',this.updateTimeElapsed);
+      this.listenTo($(this._audio),'timeupdate',this.updateProgress);
+      this.listenTo($(this._audio),'volumechange',this.updateVolumeIcon);
+      this.listenTo($(this._audio),'click',this.togglePlay);
+      this.listenTo($(this._audio),'click',this.animatePlayback);
       this.listenTo($(this._seek),'mousemove',this.updateSeekTooltip);
       this.listenTo($(this._seek),'input',this.skipAhead);
       this.listenTo($(this._volume),'input',this.updateVolume);
@@ -88,10 +89,10 @@ define([
       */
       this.listenTo($(document),'keyup',this.keyboardShortcuts);
       
-      const videoWorks = !!document.createElement('video').canPlayType;
-      if (videoWorks) {
-        this.$video.controls(false);
-        this.$videoControls.show();
+      const audioWorks = !!document.createElement('audio').canPlayType;
+      if (audioWorks) {
+        this.$audio.controls(false);
+        this.$audioControls.show();
       }
 
       this.load();
@@ -106,19 +107,19 @@ define([
           altText = media.altText || "";
 
       let $el = this.$(),
-          video = this._video,
+          audio = this._audio,
           $play = this._$play,
           $poster = this._$poster;
 
       $el.prop("title", title);
       
-      if (video.canPlayType) {
-        if (url && type && video.canPlayType(type)) {
-          video.src = url
+      if (audio.canPlayType) {
+        if (url && type && audio.canPlayType(type)) {
+          audio.src = url
         }    
       }
 
-      video.poster = posterUrl
+      audio.poster = posterUrl
       
       $poster.prop({
         "src" : posterUrl,
@@ -133,47 +134,47 @@ define([
     },
 
     load : function() {
-      this.$video.load();
+      this.$audio.load();
     },
 
     play : function() {
-      this.$video.play();
+      this.$audio.play();
 
     },
 
     stop : function() {
-      this.$video.stop();
+      this.$audio.stop();
     },
 
     pause : function() {
-      this.$video.pause();      
+      this.$audio.pause();      
     },
 
-    // togglePlay toggles the playback state of the video.
-    // If the video playback is paused or ended, the video is played
-    // otherwise, the video is paused
+    // togglePlay toggles the playback state of the audio.
+    // If the audio playback is paused or ended, the audio is played
+    // otherwise, the audio is paused
     togglePlay : function () {
-      if (this.$video.paused() || this.$video.ended()) {
-        this.$video.play();
+      if (this.$audio.paused() || this.$audio.ended()) {
+        this.$audio.play();
       } else {
-        this.$video.pause();
+        this.$audio.pause();
       }
     },
 
 
-    // hideControls hides the video controls when not in use
-    // if the video is paused, the controls must remain visible
+    // hideControls hides the audio controls when not in use
+    // if the audio is paused, the controls must remain visible
     hideControls : function () {
-      if (this.$video.paused()) {
+      if (this.$audio.paused()) {
         return;
       }
 
-      this.$videoControls.hide();
+      this.$audioControls.hide();
     },
 
-    // showControls displays the video controls
+    // showControls displays the audio controls
     showControls : function () {
-      this.$videoControls.show();
+      this.$audioControls.show();
     },
 
     // keyboardShortcuts executes the relevant functions for
@@ -184,7 +185,7 @@ define([
         case 'k':
           this.togglePlay();
           this._playbackAnimation.animatePlayback();
-          if (this.$video.paused()) {
+          if (this.$audio.paused()) {
             this.showControls();
           } else {
             setTimeout(() => {
@@ -207,8 +208,8 @@ define([
 
   });
 
-  plugins.register(VideoPlayer);
+  plugins.register(AudioPlayer);
 
-  return players.VideoPlayer = VideoPlayer;
+  return players.AudioPlayer = AudioPlayer;
 });
 

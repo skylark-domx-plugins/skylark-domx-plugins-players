@@ -1,10 +1,10 @@
-.video-progress {
+.progress-control {
   position: relative;
   height: 8.4px;
   margin-bottom: 10px;
 }
 
-progress {
+.progress-control  progress {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -16,22 +16,22 @@ progress {
   top: 0;
 }
 
-progress::-webkit-progress-bar {
+.progress-control  progress::-webkit-progress-bar {
   background-color: #474545;
   border-radius: 2px;
 }
 
-progress::-webkit-progress-value {
+.progress-control  progress::-webkit-progress-value {
   background: var(--youtube-red);
   border-radius: 2px;
 }
 
-progress::-moz-progress-bar {
+.progress-control  progress::-moz-progress-bar {
   border: 1px solid var(--youtube-red);
   background: var(--youtube-red);
 }
 
-.seek {
+.progress-control  .seek {
   position: absolute;
   top: 0;
   width: 100%;
@@ -39,11 +39,11 @@ progress::-moz-progress-bar {
   margin: 0;
 }
 
-.seek:hover+.seek-tooltip {
+.progress-control .seek:hover+.seek-tooltip {
   display: block;
 }
 
-.seek-tooltip {
+.progress-control .seek-tooltip {
   display: none;
   position: absolute;
   top: -50px;

@@ -32,7 +32,7 @@ define([
         timeElapsed : '.time-elapsed',
         duration : '.duration',
 
-        progressControl : ".video-progress",
+        progressControl : ".progress-control",
         progressBar : '.progress-bar',
         seek : '.seek',
         seekTooltip : '.seek-tooltip',

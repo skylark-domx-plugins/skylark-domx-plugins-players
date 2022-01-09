@@ -1,0 +1,27 @@
+@import "base.css";
+@import "controls-bar.css";
+@import "fullscreen.css";
+@import "play-control.css";
+@import "playback-animation.css";
+@import "progress-control.css";
+@import "volume-control.css";
+@import "wave.css";
+
+.audio-container {
+  width: 800px;
+  height :450px;
+  border-radius: 4px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+audio {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+
+
