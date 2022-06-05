@@ -21,8 +21,7 @@ define([
     options : {
       selectors : {
         video : 'video',
-        videoControls : '.video-controls',
-
+        videoControls : '.controls-bar',
 
         playbackAnimation : '.playback-animation',
 

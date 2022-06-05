@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["./players","./video-player"],function(e){return e});
+define(["./players","./audio-player","./video-player"],function(e){return e});
 //# sourceMappingURL=sourcemaps/main.js.map
